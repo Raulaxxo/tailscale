@@ -2,24 +2,16 @@ services:
   tailscale:
     image: tailscale/tailscale
     container_name: tailscale
+    hostname: ctr-gateway
+    restart: unless-stopped
+    network_mode: host
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
-    volumes:
-      - tailscale-var-lib:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-    command: tailscaled
-
-  tailscale-up:
-    image: tailscale/tailscale
-    depends_on:
-      - tailscale
-    network_mode: service:tailscale
+      - NET_RAW
     environment:
-      - TS_AUTHKEY=${TS_AUTHKEY}
+      TS_AUTHKEY: "tskey-auth-kUjR7CvABg11CNTRL-YHJLN71GVfTSayQ2VNNCfT6tefx44sge"
+      #TS_ACCEPT_DNS: "true"
+      #TS_ROUTES: "192.168.0.0/24"
     volumes:
-      - tailscale-var-lib:/var/lib/tailscale
-    command: tailscale up --authkey=${TS_AUTHKEY} --hostname=tailscale-docker --advertise-tags=tag:docker
-
-volumes:
-  tailscale-var-lib:
+      - /var/lib:/var/lib
+      - /dev/net/tun:/dev/net/tun
