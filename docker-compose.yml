@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale
+    hostname: tailscale-docker
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    networks:
+      - ts-net
+    volumes:
+      - tailscale-var-lib:/var/lib
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TS_AUTHKEY=tskey-xxxxxxxxxxxxxxxxx
+      - TS_STATE_DIR=/var/lib/tailscale
+    command: tailscaled
+
+  tailscale-up:
+    image: tailscale/tailscale
+    depends_on:
+      - tailscale
+    network_mode: service:tailscale
+    command: tailscale up --authkey=${TS_AUTHKEY} --hostname=tailscale-docker --advertise-tags=tag:docker
+
+networks:
+  ts-net:
+    driver: bridge
+
+volumes:
+  tailscale-var-lib:
