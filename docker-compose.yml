@@ -14,7 +14,8 @@ services:
       - tailscale-var-lib:/var/lib
       - /dev/net/tun:/dev/net/tun
     environment:
-      - TS_AUTHKEY=tskey-xxxxxxxxxxxxxxxxx
+      environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
     command: tailscaled
 
